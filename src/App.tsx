@@ -1,26 +1,37 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import axios from 'axios'
+import CountryCard from './components/CountryCard';
+import GlobalCard from './components/GlobalCard';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+
+	componentDidMount() {
+		this.requestData()
+	}
+
+	requestData = async () => {
+		const response = await axios.get("https://api.covid19api.com/summary")
+		console.log(response)
+		console.log(response.data)
+		this.setState(previous => {
+			return { ...previous, data: response.data }
+		})
+	}
+
+	state = {
+		data: {
+			"Global" : {},
+			"Countries": []
+		}
+	}
+
+	render() {
+		return <div className="App">
+			<GlobalCard {...this.state.data.Global} />
+			{this.state.data.Countries.map(country => <CountryCard {...country} />)}
+		</div>
+	}
 }
 
 export default App;
