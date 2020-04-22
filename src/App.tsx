@@ -12,8 +12,6 @@ class App extends React.Component {
 
 	requestData = async () => {
 		const response = await axios.get("https://api.covid19api.com/summary")
-		console.log(response)
-		console.log(response.data)
 		this.setState(previous => {
 			return { ...previous, data: response.data }
 		})
@@ -29,7 +27,11 @@ class App extends React.Component {
 	render() {
 		return <div className="App">
 			<GlobalCard {...this.state.data.Global} />
-			{this.state.data.Countries.map(country => <CountryCard {...country} />)}
+			{
+				this.state.data.Countries
+					.sort((a: any, b: any) => (b.TotalConfirmed - a.TotalConfirmed)*10000 + (b.TotalDeaths - a.TotalDeaths))	
+					.map((country: any, index: number) => <CountryCard key={country.Slug} position={index + 1} {...country} />)
+			}
 		</div>
 	}
 }
